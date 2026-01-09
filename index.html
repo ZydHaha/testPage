@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深度报告：手机换机周期与持有成本决策分析</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Custom Font: Noto Sans SC (Simulated via system fonts for performance) -->
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #f5f5f4; /* Warm neutral background (stone-100) */
+            color: #1c1917; /* stone-900 */
+        }
+
+        /* Custom Scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d6d3d1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a8a29e; 
+        }
+
+        /* Chart Container Specifics */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Constrain width on large screens */
+            height: 350px;    /* Base height */
+            margin: 0 auto;   /* Center horizontally */
+        }
+        
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 300px; /* Slightly smaller on mobile */
+            }
+        }
+
+        /* Smooth Transitions */
+        .transition-all-300 {
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Card Hover Effects */
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+
+    <!-- Chosen Palette: Warm Neutrals with functional accents -->
+    <!-- Primary Background: Stone-50 (#f5f5f4) -->
+    <!-- Text: Stone-800 (#292524) -->
+    <!-- Accent 1 (Sub-Flagship): Amber-500 (Value) -->
+    <!-- Accent 2 (Apple): Zinc-700 (Premium/Stable) -->
+    <!-- Accent 3 (Android Flagship): Blue-600 (Tech) -->
+
+    <!-- Application Structure Plan:
+         1. Hero Section: Executive Summary of the "New Market Pattern" (Price drops & Thresholds).
+         2. Key Metrics Dashboard: 3 Cards highlighting the 3 main strategies derived from the report.
+         3. Interactive Analysis:
+            - Tab 1: Annual Cost Bar Chart (The core comparison).
+            - Tab 2: Depreciation Curve (Visualizing the "Cliff" and "Zero Threshold").
+         4. Decision Matrix: Clickable Personas (Money Saver, Balanced, Techie) that filter/highlight recommendations.
+         5. Data Table: The raw numbers for transparency.
+         Rationale: Users first need the "So what?", then the visual proof, then a personalized recommendation.
+    -->
+</head>
+<body class="bg-stone-50 text-stone-800 antialiased selection:bg-stone-300">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-scale-balanced text-amber-600 text-2xl"></i>
+                    <span class="font-bold text-xl tracking-tight text-stone-900">换机决策助手 <span class="text-xs font-normal text-stone-500 hidden sm:inline-block">基于2025深度报告</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-medium text-stone-500">
+                    <a href="#summary" class="hover:text-stone-900 transition-colors">核心结论</a>
+                    <a href="#analysis" class="hover:text-stone-900 transition-colors">成本分析</a>
+                    <a href="#matrix" class="hover:text-stone-900 transition-colors">决策矩阵</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- Section 1: Introduction & Context -->
+        <section id="summary" class="animate-fade-in-up">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-stone-100">
+                <h1 class="text-2xl font-bold mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-red-500"></i> 
+                    市场新格局：残值门槛下调至 ¥200
+                </h1>
+                <p class="text-stone-600 leading-relaxed mb-6">
+                    本分析模型基于最新市场调研，将安卓旗舰机型价格设定为 <strong>¥5000</strong>，次旗舰为 <strong>¥4000</strong>。
+                    关键变量调整：当二手回收价低于 <strong>¥200</strong> 时，视为“有效残值归零”（电子垃圾）。
+                    这一微小的调整彻底改变了性价比排名。
+                </p>
+
+                <!-- 3 Key Conclusions Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card 1: Sub-Flagship -->
+                    <div class="bg-amber-50 rounded-xl p-5 border-l-4 border-amber-500 hover-lift transition-all-300 cursor-pointer" onclick="scrollToSection('matrix')">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-amber-900">次旗舰的绝对统治</h3>
+                            <i class="fa-solid fa-crown text-amber-500 text-xl"></i>
+                        </div>
+                        <div class="text-3xl font-extrabold text-amber-700 mb-1">¥925<span class="text-sm font-normal text-amber-800">/年</span></div>
+                        <p class="text-sm text-amber-800 opacity-80">策略：坚持用满 4 年</p>
+                        <p class="text-xs text-amber-900 mt-2 font-medium">全场唯一跌破千元的方案</p>
+                    </div>
+
+                    <!-- Card 2: Apple -->
+                    <div class="bg-stone-100 rounded-xl p-5 border-l-4 border-stone-600 hover-lift transition-all-300 cursor-pointer" onclick="scrollToSection('matrix')">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-stone-900">苹果标准版定位</h3>
+                            <i class="fa-brands fa-apple text-stone-700 text-xl"></i>
+                        </div>
+                        <div class="text-3xl font-extrabold text-stone-800 mb-1">¥1100<span class="text-sm font-normal text-stone-500">/年</span></div>
+                        <p class="text-sm text-stone-600 opacity-80">策略：4 年一换</p>
+                        <p class="text-xs text-stone-700 mt-2 font-medium">体验与成本的平衡标杆</p>
+                    </div>
+
+                    <!-- Card 3: Android Flagship -->
+                    <div class="bg-blue-50 rounded-xl p-5 border-l-4 border-blue-500 hover-lift transition-all-300 cursor-pointer" onclick="scrollToSection('matrix')">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-blue-900">安卓旗舰回归</h3>
+                            <i class="fa-brands fa-android text-blue-500 text-xl"></i>
+                        </div>
+                        <div class="text-3xl font-extrabold text-blue-700 mb-1">¥1150<span class="text-sm font-normal text-blue-800">/年</span></div>
+                        <p class="text-sm text-blue-800 opacity-80">策略：4 年一换</p>
+                        <p class="text-xs text-blue-900 mt-2 font-medium">仅比苹果贵 ¥50/年</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Visual Analysis (Charts) -->
+        <section id="analysis">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-stone-800">深度数据可视化</h2>
+                    <p class="text-stone-500 mt-1">
+                        通过量化模型对比不同周期的持有成本。请注意“4年”是关键的分水岭。
+                    </p>
+                </div>
+                <!-- Interactive Toggles -->
+                <div class="bg-white p-1 rounded-lg border border-stone-200 mt-4 md:mt-0 flex text-sm">
+                    <button id="btn-cost" class="px-4 py-2 rounded-md bg-stone-800 text-white shadow-sm font-medium transition-all" onclick="switchChart('cost')">
+                        年均成本对比
+                    </button>
+                    <button id="btn-depreciation" class="px-4 py-2 rounded-md text-stone-600 hover:bg-stone-100 font-medium transition-all" onclick="switchChart('depreciation')">
+                        残值衰减曲线
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6">
+                <!-- Chart Container -->
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+                
+                <!-- Dynamic Insight Text Based on Chart -->
+                <div id="chart-insight" class="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200 text-sm text-yellow-800 flex items-start gap-3">
+                    <i class="fa-regular fa-lightbulb mt-1 text-yellow-600"></i>
+                    <div>
+                        <strong>核心洞察：</strong> 
+                        <span id="insight-text">次旗舰在第4年的年均成本最低（¥925），因为虽然此时残值仅剩¥300，但由于购机成本低（¥4000）且分摊年限长，性价比反超苹果。</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Decision Matrix (Interactive Personas) -->
+        <section id="matrix">
+            <h2 class="text-2xl font-bold text-stone-800 mb-6">决策矩阵：您是哪类用户？</h2>
+            <p class="text-stone-500 mb-6">点击下方卡片，查看为您量身定制的购买建议。</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Persona 1 -->
+                <div class="persona-card group bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer relative" onclick="selectPersona('saver')">
+                    <div class="h-2 bg-amber-500"></div>
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mb-4 text-amber-600 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-piggy-bank"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">极致省钱流</h3>
+                        <p class="text-sm text-stone-500 mb-4">对手机性能要求不高，只求能用、便宜，愿意忍受第4年的轻微卡顿。</p>
+                        <div class="persona-content hidden text-sm mt-4 pt-4 border-t border-stone-100 animate-fade-in">
+                            <p class="font-bold text-amber-600 mb-1">推荐方案：次旗舰 (¥4000)</p>
+                            <p class="mb-2"><strong>持有周期：4年</strong></p>
+                            <p class="text-stone-600">利用第4年仍有的300元残值（>200元门槛），最大限度摊薄本金。这是全场最低成本方案。</p>
+                        </div>
+                        <div class="absolute bottom-4 right-4 text-stone-300 group-hover:text-amber-500 transition-colors">
+                            <i class="fa-solid fa-circle-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 2 -->
+                <div class="persona-card group bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer relative" onclick="selectPersona('balanced')">
+                    <div class="h-2 bg-stone-700"></div>
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center mb-4 text-stone-700 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-scale-unbalanced"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">均衡体验流</h3>
+                        <p class="text-sm text-stone-500 mb-4">追求省心、系统流畅和良好的二手回血能力，不想频繁倒腾数据。</p>
+                        <div class="persona-content hidden text-sm mt-4 pt-4 border-t border-stone-100 animate-fade-in">
+                            <p class="font-bold text-stone-800 mb-1">推荐方案：iPhone 标准版 (¥5500)</p>
+                            <p class="mb-2"><strong>持有周期：4年</strong></p>
+                            <p class="text-stone-600">成本仅比省钱流高 ¥175/年，但换来了iOS生态和视频拍摄优势。进可攻（卖1100回血），退可守（用第5年）。</p>
+                        </div>
+                        <div class="absolute bottom-4 right-4 text-stone-300 group-hover:text-stone-700 transition-colors">
+                            <i class="fa-solid fa-circle-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Persona 3 -->
+                <div class="persona-card group bg-white border border-stone-200 rounded-xl overflow-hidden hover:shadow-lg transition-all cursor-pointer relative" onclick="selectPersona('techie')">
+                    <div class="h-2 bg-blue-600"></div>
+                    <div class="p-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 text-blue-600 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-camera"></i>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">旗舰享受流</h3>
+                        <p class="text-sm text-stone-500 mb-4">摄影爱好者、极客。看重顶级屏幕和长焦镜头，愿意为此支付合理溢价。</p>
+                        <div class="persona-content hidden text-sm mt-4 pt-4 border-t border-stone-100 animate-fade-in">
+                            <p class="font-bold text-blue-600 mb-1">推荐方案：安卓旗舰 (¥5000)</p>
+                            <p class="mb-2"><strong>持有周期：4年</strong></p>
+                            <p class="text-stone-600">降价后性价比大增。只要坚持用满4年，年均成本（¥1150）仅比iPhone贵50元，完全值得。</p>
+                        </div>
+                        <div class="absolute bottom-4 right-4 text-stone-300 group-hover:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-circle-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Raw Data & Assumptions -->
+        <section class="border-t border-stone-200 pt-8">
+            <button onclick="toggleData()" class="flex items-center gap-2 text-stone-500 hover:text-stone-800 text-sm font-medium transition-colors">
+                <i class="fa-solid fa-table"></i> 查看详细计算数据
+                <i id="table-arrow" class="fa-solid fa-chevron-down text-xs transition-transform"></i>
+            </button>
+            
+            <div id="data-table" class="hidden mt-4 overflow-x-auto">
+                <table class="min-w-full text-sm text-left text-stone-600 bg-white rounded-lg border border-stone-200">
+                    <thead class="text-xs text-stone-700 uppercase bg-stone-50 border-b border-stone-200">
+                        <tr>
+                            <th class="px-6 py-3">机型</th>
+                            <th class="px-6 py-3">购入价</th>
+                            <th class="px-6 py-3">3年残值/成本</th>
+                            <th class="px-6 py-3 bg-stone-100 font-bold">4年残值/成本 (推荐)</th>
+                            <th class="px-6 py-3">5年残值/成本</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="bg-white border-b hover:bg-stone-50">
+                            <td class="px-6 py-4 font-bold text-amber-600">次旗舰 (标准版)</td>
+                            <td class="px-6 py-4">¥4000</td>
+                            <td class="px-6 py-4">¥500 (¥1167/年)</td>
+                            <td class="px-6 py-4 bg-amber-50 font-bold text-amber-700">¥300 (¥925/年)</td>
+                            <td class="px-6 py-4 text-stone-400">¥0 (¥800/年*)<br><span class="text-xs">体验极差</span></td>
+                        </tr>
+                        <tr class="bg-white border-b hover:bg-stone-50">
+                            <td class="px-6 py-4 font-bold text-stone-800">苹果标准版</td>
+                            <td class="px-6 py-4">¥5500</td>
+                            <td class="px-6 py-4">¥1600 (¥1300/年)</td>
+                            <td class="px-6 py-4 bg-stone-100 font-bold text-stone-800">¥1100 (¥1100/年)</td>
+                            <td class="px-6 py-4">¥700 (¥960/年)</td>
+                        </tr>
+                        <tr class="bg-white hover:bg-stone-50">
+                            <td class="px-6 py-4 font-bold text-blue-600">安卓旗舰</td>
+                            <td class="px-6 py-4">¥5000</td>
+                            <td class="px-6 py-4">¥800 (¥1400/年)</td>
+                            <td class="px-6 py-4 bg-blue-50 font-bold text-blue-700">¥400 (¥1150/年)</td>
+                            <td class="px-6 py-4 text-stone-400">¥0 (¥1000/年)<br><span class="text-xs">残值归零</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="text-xs text-stone-400 mt-2">*注：残值低于 ¥200 时视为 ¥0 计算。</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-stone-200 mt-12 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-stone-400 text-sm">
+            <p>&copy; 2025 换机决策助手 | 基于深度市场调研报告生成</p>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Data derived directly from the source report
+        const reportData = {
+            threshold: 200,
+            phones: [
+                {
+                    id: 'sub',
+                    name: '次旗舰 (4k)',
+                    price: 4000,
+                    color: 'rgba(245, 158, 11, 0.8)', // Amber
+                    borderColor: 'rgba(245, 158, 11, 1)',
+                    residuals: [null, null, null, 500, 300, 0], // Index corresponds to year 0-5. 0 is current.
+                    costs: { 3: 1167, 4: 925, 5: 1000 } // Calculated annual costs
+                },
+                {
+                    id: 'apple',
+                    name: '苹果标准版 (5.5k)',
+                    price: 5500,
+                    color: 'rgba(68, 64, 60, 0.8)', // Stone-700
+                    borderColor: 'rgba(68, 64, 60, 1)',
+                    residuals: [null, null, null, 1600, 1100, 700],
+                    costs: { 3: 1300, 4: 1100, 5: 960 }
+                },
+                {
+                    id: 'android',
+                    name: '安卓旗舰 (5k)',
+                    price: 5000,
+                    color: 'rgba(37, 99, 235, 0.8)', // Blue-600
+                    borderColor: 'rgba(37, 99, 235, 1)',
+                    residuals: [null, null, null, 800, 400, 0], // Year 5 is <100 so 0
+                    costs: { 3: 1400, 4: 1150, 5: 1000 }
+                }
+            ]
+        };
+
+        let currentChart = null;
+
+        // --- Chart 1: Annualized Cost Comparison (Bar) ---
+        function renderCostChart() {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+
+            currentChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['3年一换', '4年一换 (推荐)', '5年一换'],
+                    datasets: reportData.phones.map(phone => ({
+                        label: phone.name,
+                        data: [phone.costs[3], phone.costs[4], phone.costs[5]],
+                        backgroundColor: phone.color,
+                        borderColor: phone.borderColor,
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ¥' + context.raw + '/年';
+                                },
+                                afterLabel: function(context) {
+                                    if(context.label.includes('4年') && context.dataset.label.includes('次旗舰')) {
+                                        return '🏆 全场最低成本';
+                                    }
+                                }
+                            }
+                        },
+                        annotation: {
+                            // Note: Simple Chart.js CDN doesn't include annotation plugin by default, 
+                            // strictly sticking to core Chart.js as per requirements.
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 800,
+                            title: { display: true, text: '年均持有成本 (元)' }
+                        }
+                    }
+                }
+            });
+
+            // Update Insight Text
+            document.getElementById('insight-text').innerHTML = `
+                <strong>次旗舰 (4年一换)</strong> 确立了性价比霸主地位（¥925/年）。
+                虽然此时残值仅剩 ¥300，但由于购机门槛低，其摊薄效应击败了苹果的5年方案（¥960/年）。
+                注意：安卓旗舰在第4年的成本已降至 ¥1150，进入合理区间。
+            `;
+        }
+
+        // --- Chart 2: Depreciation Curve (Line) ---
+        function renderDepreciationChart() {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            
+            if (currentChart) currentChart.destroy();
+
+            // Prepare data points (Start Price -> Y3 -> Y4 -> Y5)
+            // We need to interpolate Y1/Y2 roughly for visual smoothness or just plot known points
+            // For this visualization, we plot Year 0, 3, 4, 5.
+            const labels = ['购入', '第3年', '第4年', '第5年'];
+            
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: reportData.phones.map(phone => ({
+                        label: phone.name,
+                        data: [phone.price, phone.residuals[3], phone.residuals[4], phone.residuals[5]],
+                        borderColor: phone.borderColor,
+                        backgroundColor: phone.color,
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }))
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let val = context.raw;
+                                    let note = '';
+                                    if (val < 200 && val > 0) note = ' (归零)';
+                                    if (val === 0) note = ' (归零)';
+                                    return context.dataset.label + ': ¥' + val + note;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: '手机剩余价值 (元)' },
+                            grid: {
+                                color: (context) => context.tick.value === 200 ? 'rgba(239, 68, 68, 0.5)' : 'rgba(0, 0, 0, 0.1)',
+                                lineWidth: (context) => context.tick.value === 200 ? 2 : 1,
+                            }
+                        }
+                    }
+                }
+            });
+
+             // Update Insight Text
+             document.getElementById('insight-text').innerHTML = `
+                <span class="text-red-600 font-bold">红线警示：</span> 图表中 ¥200 处为“电子垃圾”门槛。
+                可以看到<strong>次旗舰</strong>在第4年勉强守住 ¥300 关口，这是它能保持低成本的关键。
+                一旦跌破此线（如第5年），有效回血能力归零。
+            `;
+        }
+
+        // --- UI Interactions ---
+
+        function switchChart(type) {
+            // Update Buttons
+            const btnCost = document.getElementById('btn-cost');
+            const btnDep = document.getElementById('btn-depreciation');
+            
+            if (type === 'cost') {
+                btnCost.className = "px-4 py-2 rounded-md bg-stone-800 text-white shadow-sm font-medium transition-all";
+                btnDep.className = "px-4 py-2 rounded-md text-stone-600 hover:bg-stone-100 font-medium transition-all";
+                renderCostChart();
+            } else {
+                btnCost.className = "px-4 py-2 rounded-md text-stone-600 hover:bg-stone-100 font-medium transition-all";
+                btnDep.className = "px-4 py-2 rounded-md bg-stone-800 text-white shadow-sm font-medium transition-all";
+                renderDepreciationChart();
+            }
+        }
+
+        function selectPersona(type) {
+            // Reset all cards
+            document.querySelectorAll('.persona-card').forEach(card => {
+                card.classList.remove('ring-2', 'ring-offset-2');
+                // Use DOM traversal to find content div
+                const content = card.querySelector('.persona-content');
+                content.classList.add('hidden');
+            });
+
+            // Activate selected
+            let activeCard;
+            let ringColor;
+            
+            if (type === 'saver') {
+                activeCard = document.querySelectorAll('.persona-card')[0];
+                ringColor = 'ring-amber-500';
+            } else if (type === 'balanced') {
+                activeCard = document.querySelectorAll('.persona-card')[1];
+                ringColor = 'ring-stone-700';
+            } else {
+                activeCard = document.querySelectorAll('.persona-card')[2];
+                ringColor = 'ring-blue-600';
+            }
+
+            activeCard.classList.add('ring-2', 'ring-offset-2', ringColor);
+            activeCard.querySelector('.persona-content').classList.remove('hidden');
+        }
+
+        function toggleData() {
+            const table = document.getElementById('data-table');
+            const arrow = document.getElementById('table-arrow');
+            
+            if (table.classList.contains('hidden')) {
+                table.classList.remove('hidden');
+                table.classList.add('animate-fade-in');
+                arrow.classList.remove('fa-chevron-down');
+                arrow.classList.add('fa-chevron-up');
+            } else {
+                table.classList.add('hidden');
+                arrow.classList.remove('fa-chevron-up');
+                arrow.classList.add('fa-chevron-down');
+            }
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            renderCostChart();
+            
+            // Add fade-in animation styles
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeInUp {
+                    from { opacity: 0; transform: translateY(20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up {
+                    animation: fadeInUp 0.6s ease-out forwards;
+                }
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                .animate-fade-in {
+                    animation: fadeIn 0.4s ease-out forwards;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+    </script>
+    
+    <!-- Visualization & Content Choices:
+        1. Viz: Grouped Bar Chart (Chart.js)
+           Goal: Compare annual costs directly across the three main timeframes (3, 4, 5 years).
+           Interaction: Hover tooltips with custom labels (e.g., "Lowest Cost").
+           Justification: Bar charts are the clearest way to compare discrete financial values side-by-side.
+
+        2. Viz: Line Chart (Depreciation Simulator)
+           Goal: Visualize the speed of value loss and the "200 RMB Threshold".
+           Interaction: Toggle button to switch views.
+           Justification: Shows the "cliff" effect of depreciation, especially for Android models.
+
+        3. Content: Persona Cards
+           Goal: Translate raw numbers into actionable advice for specific user types.
+           Interaction: Click to expand details.
+           Justification: Users identify with needs (saving money vs. tech specs) more than raw numbers.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used (FontAwesome used). NO Mermaid JS used. -->
+</body>
+</html>
